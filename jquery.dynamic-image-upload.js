@@ -454,6 +454,10 @@
             $(img).data('file').customData = customData;
         },
 
+        getDropContainer: function () {
+            return this.dropContainer;
+        },
+
         uploadImage: function (img) {
             var self = this,
                 file = img.data('file'),
