@@ -69,7 +69,7 @@
             // Get these tags from the image
             // store it in $(img).data('exif')
             // requires exif.js (https://github.com/exif-js/exif-js)
-            extractExif: ['Make', 'Model', 'orientation'],
+            extractExif: ['Make', 'Model', 'Orientation'],
 
             // For debugging (-1 = disabled, 0 = errors, 5 = debug)
             verboseLevel: -1,
