@@ -1,5 +1,5 @@
 /*!
- * jQuery JavaScript Library v2.2.3
+ * jQuery Dynamic Image Upload library
  * https://tech.tiogatours.nl/jquery-dynamic-image-upload/README.md
  *
  * Copyright Tioga Tours B.V.
