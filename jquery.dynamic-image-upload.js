@@ -438,6 +438,22 @@
             processImages();
         },
 
+        getImageName: function (img) {
+            return $(img).data('file').name;
+        },
+
+        getImageExif: function (img) {
+            return $(img).data('file').exifData;
+        },
+
+        getImageData: function (img) {
+            return $(img).data('file').customData || {};
+        },
+
+        setImageData: function (img, customData) {
+            $(img).data('file').customData = customData;
+        },
+
         uploadImage: function (img) {
             var self = this,
                 file = img.data('file'),
@@ -454,6 +470,7 @@
                 ajaxData.data.src = dataStr;
                 ajaxData.data.exif = file.exifData;
                 ajaxData.data.name = file.name;
+                ajaxData.data.customData = file.customData || {};
 
                 $(self).trigger('image-upload', [img]);
 
