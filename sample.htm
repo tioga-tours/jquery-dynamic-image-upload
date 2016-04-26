@@ -1,145 +1,158 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8" />
-		<title>Javascript connection benchmark</title>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-		<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
-		<script type="text/javascript" src="assets/exif.js"></script>
-		<script type="text/javascript" src="assets/canvas_resize.js"></script>
-		<script type="text/javascript" src="../jquery-speedtest/jquery.speedtest.js"></script>
-		<script type="text/javascript" src="jquery.dynamic-image-upload.js"></script>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Javascript connection benchmark</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"
+            integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="assets/exif.js"></script>
+    <script type="text/javascript" src="assets/canvas_resize.js"></script>
+    <script type="text/javascript" src="assets/jquery.speedtest.js"></script>
+    <script type="text/javascript" src="jquery.dynamic-image-upload.js"></script>
 
-		<script type="text/javascript">
-			$(document).ready(function() {
-				var uploader = new DynamicImageUpload($('#droparea-1'), {
-					previewSize: [0,120],
-					uploadSizes: [
-						3000000, // Three megapixel
-						[1920, 1080], // full HD
-						[1000,1000], // One megapixel
-						[800,600] //
-					],
-				});
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var uploader = new DynamicImageUpload($('#droparea-1'), {
+                previewSize: [0, 120],
+                uploadSizes: [
+                    3000000, // Three megapixel
+                    [1920, 1080], // full HD
+                    [1000, 1000], // One megapixel
+                    [800, 600] //
+                ],
+                speedTest: {
+                    upload: {
+                        url: 'assets/speedtest.php'
+                    }
+                },
+                verboseLevel: 5
+            });
 
-				var logEvent = function (type, msg) {
-					$('#log').html('Triggered: ' + type + ' (' + (msg?msg:'-') + ')<br/>' + $('#log').html());
-				};
+            var logEvent = function (type, msg) {
+                $('#log').html('Triggered: ' + type + ' (' + (msg ? msg : '-') + ')<br/>' + $('#log').html());
+            };
 
-				$(uploader).on({
-					'image-add': function () {
-						$('#droparea-1').addClass('busy');
-						logEvent('image-add');
-					},
-					'image-added': function () {
-						$('#droparea-1').removeClass('busy');
-						logEvent('image-added');
-					},
-					'upload-start': function () {
-						logEvent('upload-start');
-					},
-					'upload-progress': function (e, total, current) {
-						console.log(arguments);
-						logEvent('upload-progress', '' + current + ' of ' + total);
-					},
-					'upload-complete': function () {
-						logEvent('upload-complete');
-					},
+            $(uploader).on({
+                'image-add': function () {
+                    $('#droparea-1').addClass('busy');
+                    logEvent('image-add');
+                },
+                'image-added': function () {
+                    $('#droparea-1').removeClass('busy');
+                    logEvent('image-added');
+                },
+                'upload-start': function () {
+                    logEvent('upload-start');
+                },
+                'upload-progress': function (e, total, current) {
+                    console.log(arguments);
+                    logEvent('upload-progress', '' + current + ' of ' + total);
+                },
+                'upload-complete': function () {
+                    logEvent('upload-complete');
+                },
 
-					'image-process': function (e, img) {
-						img.addClass('busy');
-						logEvent('image-process', '');
-					},
-					'image-success': function (e, img) {
-						logEvent('image-success');
-					},
-					'image-error': function (e, img, xhr, statusText) {
-						img.addClass('error');
-						logEvent('image-error', 'No upload handler is configured: ' + xhr.status);
-					},
-					'image-complete': function (e, img) {
-						img.removeClass('busy');
-						logEvent('image-complete');
-					},
-					'upload-size-change': function (e, size) {
-						logEvent('upload-size-change', size);
-					}
-				});
+                'image-process': function (e, img) {
+                    img.addClass('busy');
+                    logEvent('image-process', '');
+                },
+                'image-success': function (e, img) {
+                    logEvent('image-success');
+                },
+                'image-error': function (e, img, xhr, statusText) {
+                    img.addClass('error');
+                    logEvent('image-error', 'No upload handler is configured: ' + xhr.status);
+                },
+                'image-complete': function (e, img) {
+                    img.removeClass('busy');
+                    logEvent('image-complete');
+                },
+                'upload-size-change': function (e, size) {
+                    logEvent('upload-size-change', size);
+                }
+            });
 
-				$('#start-upload').on({
-					click: function () {
-						uploader.upload();
-					}
-				});
+            $('#start-upload').on({
+                click: function () {
+                    uploader.upload();
+                }
+            });
 
-				$('#droparea-1').on('click', '.img-container', function (e) {
-					e.stopPropagation();
-					$(this).remove();
-				});
-			});
-		</script>
+            $('#droparea-1').on('click', '.img-container', function (e) {
+                e.stopPropagation();
+                $(this).remove();
+            });
+        });
+    </script>
 
-		<style type="text/css">
-			#droparea-1 {
-				border: 4px dashed #444;
-				min-height:600px;
-			}
+    <style type="text/css">
+        #droparea-1 {
+            border: 4px dashed #444;
+            min-height: 600px;
+        }
 
-			#droparea-1.busy {
-				background-color:#999;
-				opacity:0.6;
-			}
+        #droparea-1.busy {
+            background-color: #999;
+            opacity: 0.6;
+        }
 
-			#droparea-1 img {
-				float:left;
-				margin:15px;
-			}
+        #droparea-1 img {
+            float: left;
+            margin: 15px;
+        }
 
-			#droparea-1 img.error {
-				border: 3px solid #B00;
-			}
-			#droparea-1 img.busy {
-				opacity: 0.5;
-			}
+        #droparea-1 img.error {
+            border: 3px solid #B00;
+        }
 
-			#droparea-1.drag-hover {
-				background-color:rgba(200,200,255, 0.6);
-				border: 4px dashed #222;
-			}
+        #droparea-1 img.busy {
+            opacity: 0.5;
+        }
 
-			#droparea-1 [type=file] {
-				display:none;
-			}
+        #droparea-1.drag-hover {
+            background-color: rgba(200, 200, 255, 0.6);
+            border: 4px dashed #222;
+        }
 
-			#log {
+        #droparea-1 [type=file] {
+            display: none;
+        }
 
-			}
-		</style>
-	</head>
-	<body>
-	<div class="container">
-		<div class="row">
-			<div class="col-xs-12">
-				<h1>jQuery Dynamic Image Upload</h1>
-			</div>
-			<div class="col-xs-12 col-sm-8">
-				<h2>Drop images in the box or click it</h2>
-				<p>Click an image to remove it</p>
-				<div class="row">
-					<div class="col-xs-12" id="droparea-1">
-						<input type="file" name="fileData[]" multiple>
-					</div>
-					<div class="col-xs-12">
-						<button id="start-upload" class="btn btn-primary btn-lg pull-right">Upload</button>
-					</div>
-				</div>
-			</div>
-			<div class="col-xs-12 col-sm-4">
-				<h2>Log</h2>
-				<pre id="log"></pre>
-			</div>
-		</div>
-	</div>
-	<a href="https://github.com/tioga-tours/jquery-dynamic-image-upload"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
-	</body>
+        #log {
+
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>jQuery Dynamic Image Upload</h1>
+        </div>
+        <div class="col-xs-12 col-sm-8">
+            <h2>Drop images in the box or click it</h2>
+            <p>Click an image to remove it</p>
+            <div class="row">
+                <div class="col-xs-12" id="droparea-1">
+                    <input type="file" name="fileData[]" multiple>
+                </div>
+                <div class="col-xs-12">
+                    <button id="start-upload" class="btn btn-primary btn-lg pull-right">Upload</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-4">
+            <h2>Log</h2>
+            <pre id="log"></pre>
+        </div>
+    </div>
+</div>
+<a href="https://github.com/tioga-tours/jquery-dynamic-image-upload"><img
+        style="position: absolute; top: 0; right: 0; border: 0;"
+        src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67"
+        alt="Fork me on GitHub"
+        data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
+</body>
 </html>
