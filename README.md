@@ -1,6 +1,11 @@
 # jQuery dynamic image upload
 
-Resize images in the browser using a canvas. Supports:
+Resize images in the browser using a canvas.
+
+
+[Demo](https://tech.tiogatours.nl/jquery-dynamic-image-upload/sample.htm)
+
+Supports:
 
 - Support drag-n-drop
 - Support file selection
