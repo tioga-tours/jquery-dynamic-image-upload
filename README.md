@@ -3,7 +3,7 @@
 Resize images in the browser using a canvas.
 
 
-[Demo](https://tech.tiogatours.nl/jquery-dynamic-image-upload/sample.htm)
+[Demo](https://tech.tiogatours.nl/jquery-dynamic-image-upload/demo.htm)
 
 Supports:
 
