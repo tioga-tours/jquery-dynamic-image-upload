@@ -255,13 +255,18 @@
                 canvas.height = image.height;
 
                 ctx = canvas.getContext('2d');
-                ctx.drawImage(image, 0, 0, image.width, image.height);
-
-                if (file.exifData && file.exifData.orientation) {
-                    self.correctOrientation(ctx, canvas, file.exifData.orientation);
+                ctx.save();
+                if (file.exifData && file.exifData.Orientation) {
+                    if (file.exifData.Orientation > 4) {
+                        canvas.width = image.height;
+                        canvas.height = image.width;
+                    }
+                    self.correctOrientation(ctx, canvas, file.exifData.Orientation);
                 }
+                ctx.drawImage(image, 0, 0, image.width, image.height);
+                ctx.restore();
 
-                scale = self.calculateScale(toSize, image.width, image.height);
+                scale = self.calculateScale(toSize, canvas.width, canvas.height);
 
                 function handleResult(canvas) {
                     self.verbose('Resizing done', 5);
@@ -274,8 +279,8 @@
                     return;
                 }
 
-                width = Math.round(scale * image.width);
-                height = Math.round(scale * image.height);
+                width = Math.round(scale * canvas.width);
+                height = Math.round(scale * canvas.height);
 
                 if (highQuality === true) {
                     self.highQualityResize(canvas, image, width, height).then(handleResult);
@@ -289,6 +294,7 @@
                 image.src = e.target.result;
             };
             reader.readAsDataURL(file);
+            image.file = file;
 
             return deferred.promise();
         },
@@ -318,7 +324,15 @@
 
             canvas.width = width;
             canvas.height = height;
-            ctx.drawImage(image, 0, 0, width, height);
+
+            ctx.save();
+            if (image.file.exifData && image.file.exifData.Orientation) {
+                this.correctOrientation(ctx, canvas, image.file.exifData.Orientation);
+                ctx.drawImage(image, 0, 0, image.file.exifData.Orientation>4?height:width, image.file.exifData.Orientation>4?width:height);
+            } else {
+                ctx.drawImage(image, 0, 0, width, height);
+            }
+            ctx.restore();
 
             deferred.resolve(canvas);
             return deferred.promise();
@@ -365,18 +379,18 @@
                 case 6:
                     // 90° rotate right
                     ctx.rotate(0.5 * Math.PI);
-                    ctx.translate(0, -canvas.height);
+                    ctx.translate(0, -canvas.width);
                     break;
                 case 7:
                     // horizontal flip + 90 rotate right
                     ctx.rotate(0.5 * Math.PI);
-                    ctx.translate(canvas.width, -canvas.height);
+                    ctx.translate(canvas.height, -canvas.width);
                     ctx.scale(-1, 1);
                     break;
                 case 8:
                     // 90° rotate left
                     ctx.rotate(-0.5 * Math.PI);
-                    ctx.translate(-canvas.width, 0);
+                    ctx.translate(-canvas.height, 0);
                     break;
             }
         },
